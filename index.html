@@ -2,49 +2,94 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Полка — Читалка v1.0</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Полка — Читалка v1.02</title>
 
   <!-- PWA & Mobile Web App Meta -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Читалка">
-  <meta name="theme-color" content="#1e1e24">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#2c221e">
 
-  <!-- SVG Book Icon as Favicon & Apple Touch Icon -->
+  <!-- SVG Book Icon -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='110' fill='%238d2b2b'/%3E%3Cpath d='M110 120c45-20 95-20 146 0 51-20 101-20 146 0v240c-45-20-95-20-146 0-51-20-101-20-146 0z' fill='%23fbf0d9'/%3E%3Cpath d='M256 120v240' stroke='%233e2723' stroke-width='14' stroke-linecap='round'/%3E%3Cpath d='M130 180c35-15 80-15 110 0M130 230c35-15 80-15 110 0M130 280c35-15 80-15 110 0M272 180c30-15 75-15 110 0M272 230c30-15 75-15 110 0M272 280c30-15 75-15 110 0' stroke='%23c7b299' stroke-width='8' stroke-linecap='round'/%3E%3Cpath d='M380 120v110l-25-20-25 20v-110' fill='%23d84315'/%3E%3C/svg%3E">
   <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='110' fill='%238d2b2b'/%3E%3Cpath d='M110 120c45-20 95-20 146 0 51-20 101-20 146 0v240c-45-20-95-20-146 0-51-20-101-20-146 0z' fill='%23fbf0d9'/%3E%3Cpath d='M256 120v240' stroke='%233e2723' stroke-width='14' stroke-linecap='round'/%3E%3Cpath d='M130 180c35-15 80-15 110 0M130 230c35-15 80-15 110 0M130 280c35-15 80-15 110 0M272 180c30-15 75-15 110 0M272 230c30-15 75-15 110 0M272 280c30-15 75-15 110 0' stroke='%23c7b299' stroke-width='8' stroke-linecap='round'/%3E%3Cpath d='M380 120v110l-25-20-25 20v-110' fill='%23d84315'/%3E%3C/svg%3E">
 
   <style>
     :root {
-      --bg: #18181c;
-      --shelf-wood: #3a2218;
-      --shelf-light: #523122;
-      --paper: #fbf1dc;
-      --paper-shadow: #e0d2b4;
-      --text: #2a2421;
+      /* Светлый текстурированный фон полки: теплое дерево/шпон */
+      --shelf-bg: #4a382c;
+      --shelf-wood: #2b1b12;
+      --shelf-top: #6a4a35;
+      --shelf-plank: #845d43;
+
+      /* Цвета читалки (тема по умолчанию - Сепия) */
+      --reader-bg: #f4ebd8;
+      --reader-text: #2c241c;
+      --reader-sub: #827263;
+      --reader-border: rgba(44, 36, 28, 0.12);
+
       --accent: #d84315;
       --accent-hover: #bf360c;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    /* Темы читалки */
+    body.theme-sepia {
+      --reader-bg: #f4ebd8;
+      --reader-text: #2c241c;
+      --reader-sub: #827263;
+      --reader-border: rgba(44, 36, 28, 0.12);
+    }
+    body.theme-day {
+      --reader-bg: #faf7f2;
+      --reader-text: #1d1d1f;
+      --reader-sub: #86868b;
+      --reader-border: rgba(0, 0, 0, 0.08);
+    }
+    body.theme-night {
+      --reader-bg: #18181c;
+      --reader-text: #d8d8e0;
+      --reader-sub: #787885;
+      --reader-border: rgba(255, 255, 255, 0.1);
+    }
+    body.theme-mint {
+      --reader-bg: #e6ede4;
+      --reader-text: #1d3322;
+      --reader-sub: #637a68;
+      --reader-border: rgba(29, 51, 34, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: var(--bg);
-      color: #fff;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       overflow-x: hidden;
+      /* Уютная теплая текстура полки: вертикальный древесный ритм и мягкие тени */
+      background-color: var(--shelf-bg);
+      background-image: 
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 2px, transparent 2px, transparent 40px),
+        linear-gradient(180deg, #3d2d22 0%, #2e2017 100%);
+      color: #fff;
     }
 
+    /* Шапка полки */
     header {
-      padding: 1rem 1.25rem;
-      background: rgba(20, 20, 24, 0.85);
+      padding: 0.9rem 1.25rem;
+      background: rgba(30, 20, 15, 0.78);
       backdrop-filter: blur(12px);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
       position: sticky;
       top: 0;
       z-index: 10;
@@ -52,28 +97,29 @@
     .brand {
       display: flex;
       align-items: center;
-      gap: 0.6rem;
+      gap: 0.65rem;
     }
     .brand-icon {
-      width: 32px;
-      height: 32px;
+      width: 34px;
+      height: 34px;
       background: #8d2b2b;
-      border-radius: 8px;
+      border-radius: 9px;
       display: grid;
       place-items: center;
-      font-size: 1.1rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      font-size: 1.15rem;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.4);
     }
     .brand-text h1 {
-      font-size: 1.1rem;
+      font-size: 1.12rem;
       font-weight: 700;
       letter-spacing: -0.01em;
     }
     .brand-text span {
       font-size: 0.72rem;
-      color: #a0a0ab;
+      color: #dfcdbf;
       display: block;
     }
+
     button {
       background: var(--accent);
       color: #fff;
@@ -94,8 +140,8 @@
     /* Полка */
     .shelf-container {
       flex: 1;
-      padding: 2.5rem 1rem;
-      max-width: 860px;
+      padding: 2.5rem 1.25rem;
+      max-width: 900px;
       margin: 0 auto;
       width: 100%;
     }
@@ -106,41 +152,46 @@
       display: flex;
       gap: 1.25rem;
       align-items: flex-end;
-      padding: 0 1rem 0.2rem;
+      padding: 0 0.8rem 0.2rem;
       overflow-x: auto;
       scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.2) transparent;
     }
+    .books-grid::-webkit-scrollbar { height: 6px; }
+    .books-grid::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+
+    /* Деревянная планка полки с фактурой */
     .wood-board {
-      height: 18px;
-      background: linear-gradient(180deg, var(--shelf-light) 0%, var(--shelf-wood) 100%);
-      border-radius: 3px;
-      box-shadow: 0 14px 25px rgba(0,0,0,0.65), inset 0 2px 2px rgba(255,255,255,0.15);
+      height: 20px;
+      background: linear-gradient(180deg, var(--shelf-plank) 0%, var(--shelf-wood) 100%);
+      border-radius: 4px;
+      box-shadow: 0 16px 28px rgba(0,0,0,0.65), inset 0 2px 2px rgba(255,255,255,0.25);
       position: relative;
     }
     .wood-board::after {
       content: '';
       position: absolute;
       top: 100%;
-      left: 3%;
-      right: 3%;
-      height: 10px;
-      background: rgba(0,0,0,0.45);
-      filter: blur(6px);
+      left: 2%;
+      right: 2%;
+      height: 14px;
+      background: rgba(0,0,0,0.55);
+      filter: blur(8px);
     }
 
     /* Книга на полке */
     .book-item {
       flex-shrink: 0;
-      width: 120px;
-      height: 175px;
+      width: 124px;
+      height: 180px;
       border-radius: 3px 10px 10px 3px;
-      padding: 0.9rem 0.75rem;
+      padding: 0.9rem 0.8rem;
       cursor: pointer;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       position: relative;
-      box-shadow: -5px 0 10px rgba(0,0,0,0.5), 5px 8px 18px rgba(0,0,0,0.35);
+      box-shadow: -5px 0 10px rgba(0,0,0,0.55), 6px 10px 22px rgba(0,0,0,0.45);
       transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s;
       user-select: none;
     }
@@ -150,159 +201,282 @@
       left: 0;
       top: 0;
       bottom: 0;
-      width: 9px;
-      background: linear-gradient(90deg, rgba(255,255,255,0.25) 0%, rgba(0,0,0,0.2) 100%);
+      width: 10px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.3) 0%, rgba(0,0,0,0.25) 100%);
       border-radius: 3px 0 0 3px;
     }
     .book-item:hover {
       transform: translateY(-12px) rotate(-1deg);
-      box-shadow: -6px 12px 24px rgba(0,0,0,0.6);
+      box-shadow: -6px 14px 28px rgba(0,0,0,0.65);
     }
     .book-title {
-      font-size: 0.88rem;
+      font-size: 0.9rem;
       font-weight: 700;
       line-height: 1.25;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+      text-shadow: 0 1px 3px rgba(0,0,0,0.65);
       word-break: break-word;
     }
     .book-meta {
       font-size: 0.72rem;
-      opacity: 0.85;
+      opacity: 0.9;
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
     }
     .bookmark-flag {
       color: #ffd54f;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
     }
 
-    /* Модальное окно чтения */
-    .reader-modal {
+    /* ========================================================
+       ПОЛНОЭКРАННАЯ ЧИТАЛКА (FULLSCREEN READER ДЛЯ СМАРТФОНА)
+       ======================================================== */
+    .reader-screen {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(10, 10, 14, 0.92);
-      backdrop-filter: blur(14px);
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      background: var(--reader-bg);
+      color: var(--reader-text);
+      z-index: 1000;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-      z-index: 100;
-    }
-    .reader-modal.active { display: flex; }
-
-    .reader-topbar {
-      width: 100%;
-      max-width: 520px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.75rem;
-      padding: 0 0.5rem;
-    }
-    .reader-topbar span {
-      font-size: 0.88rem;
-      color: #cfcfe0;
-      font-weight: 500;
-      white-space: nowrap;
       overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 260px;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: background 0.3s ease, color 0.3s ease;
     }
-    .close-btn {
-      background: rgba(255,255,255,0.12);
-      border-radius: 50%;
-      width: 36px;
-      height: 36px;
-      padding: 0;
-      display: grid;
-      place-items: center;
-      font-size: 1.1rem;
+    .reader-screen.active {
+      display: flex;
     }
 
-    /* Книжный разворот и 3D анимация */
-    .book-stage {
-      perspective: 1600px;
-      width: 100%;
-      max-width: 520px;
-      height: 68vh;
-      min-height: 420px;
-      max-height: 640px;
-      position: relative;
-    }
-    .page-sheet {
+    /* Контейнер страницы на весь экран */
+    .reader-stage {
+      flex: 1;
       width: 100%;
       height: 100%;
-      background: var(--paper);
-      color: var(--text);
-      padding: 2.2rem 2rem 2rem 2.4rem;
-      border-radius: 6px 16px 16px 6px;
-      box-shadow: inset 24px 0 32px var(--paper-shadow), 0 16px 36px rgba(0,0,0,0.55);
+      position: relative;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      transform-origin: left center;
-      transition: transform 0.55s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease;
-      position: relative;
+      padding: env(safe-area-inset-top, 16px) env(safe-area-inset-right, 20px) env(safe-area-inset-bottom, 16px) env(safe-area-inset-left, 20px);
     }
-    .page-ribbon {
+
+    /* Индикатор закладки (ленточка в правом верхнем углу) */
+    .reader-ribbon {
       display: none;
       position: absolute;
       top: 0;
       right: 28px;
-      width: 22px;
-      height: 38px;
+      width: 24px;
+      height: 42px;
       background: var(--accent);
       clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 75%, 0 100%);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      z-index: 5;
     }
-    .page-ribbon.visible { display: block; }
+    .reader-ribbon.visible { display: block; }
 
-    .page-sheet.flipping-forward {
-      transform: rotateY(-110deg) scale(0.95);
-      opacity: 0.15;
+    /* Область текста */
+    .reader-page-content {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.28s ease;
+      touch-action: pan-y;
     }
-    .page-sheet.flipping-back {
-      transform: rotateY(40deg) scale(0.95);
-      opacity: 0.15;
+    .reader-page-content.flipping-left {
+      transform: translateX(-40px) rotateY(-10deg);
+      opacity: 0.1;
+    }
+    .reader-page-content.flipping-right {
+      transform: translateX(40px) rotateY(10deg);
+      opacity: 0.1;
     }
 
-    .page-text {
-      font-size: 1.08rem;
-      line-height: 1.7;
+    /* Текст книги */
+    .book-body {
+      flex: 1;
       overflow-y: auto;
       white-space: pre-wrap;
-      font-family: Georgia, "Times New Roman", serif;
-      padding-right: 0.4rem;
+      font-size: var(--font-size, 1.12rem);
+      line-height: var(--line-height, 1.72);
+      font-family: var(--font-family, Georgia, "Times New Roman", serif);
+      padding: 1.2rem var(--margin-h, 1.2rem) 1rem;
+      scrollbar-width: none;
     }
-    .page-bottom {
+    .book-body::-webkit-scrollbar { display: none; }
+
+    /* Нижний колонтитул на странице */
+    .reader-footer {
       display: flex;
       justify-content: space-between;
+      align-items: center;
+      padding: 0.4rem var(--margin-h, 1.2rem);
       font-size: 0.78rem;
-      color: #7a6e65;
-      border-top: 1px solid rgba(0,0,0,0.1);
-      padding-top: 0.7rem;
-      margin-top: 0.5rem;
+      color: var(--reader-sub);
+      border-top: 1px solid var(--reader-border);
     }
 
-    /* Навигация под книгой */
-    .reader-controls {
-      margin-top: 1rem;
+    /* Всплывающая подсказка о двойном тапе */
+    .tap-hint {
+      position: absolute;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.75);
+      color: #fff;
+      font-size: 0.78rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 20px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      z-index: 20;
+    }
+    .tap-hint.show { opacity: 1; }
+
+    /* ========================================================
+       ПЛАВАЮЩЕЕ МЕНЮ ЧИТАЛКИ (HUD), ВЫЗЫВАЕМОЕ ПО ДВОЙНОМУ ТАПУ
+       ======================================================== */
+    .reader-hud {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
       display: flex;
-      gap: 0.75rem;
+      flex-direction: column;
+      justify-content: space-between;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s ease, visibility 0.25s;
+      z-index: 100;
+    }
+    .reader-hud.active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    /* Верхняя плашка HUD */
+    .hud-topbar {
+      padding: calc(env(safe-area-inset-top, 0px) + 0.8rem) 1.2rem 0.8rem;
+      background: rgba(22, 22, 26, 0.88);
+      backdrop-filter: blur(14px);
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      width: 100%;
-      max-width: 520px;
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
     }
-    .btn-ctrl {
+    .hud-title {
+      font-size: 0.92rem;
+      font-weight: 600;
+      max-width: 55%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .hud-btn {
       background: rgba(255,255,255,0.12);
-      font-size: 0.85rem;
-      padding: 0.55rem 0.9rem;
+      color: #fff;
+      border: none;
+      padding: 0.45rem 0.8rem;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      cursor: pointer;
     }
-    .btn-ctrl.bookmarked {
+    .hud-btn.active-bm {
       background: #f57c00;
+    }
+
+    /* Нижняя панель настроек HUD */
+    .hud-bottombar {
+      padding: 1.2rem 1.25rem calc(env(safe-area-inset-bottom, 0px) + 1.2rem);
+      background: rgba(22, 22, 26, 0.94);
+      backdrop-filter: blur(16px);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
+      border-radius: 18px 18px 0 0;
+    }
+
+    /* Ползунок прогресса */
+    .scrubber-row {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    .scrubber-row span {
+      font-size: 0.78rem;
+      color: #aaa;
+      min-width: 62px;
+      text-align: center;
+    }
+    .scrubber {
+      flex: 1;
+      height: 6px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    /* Строки настроек */
+    .control-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    .control-label {
+      font-size: 0.82rem;
+      color: #bbb;
+      min-width: 70px;
+    }
+    .btn-group {
+      display: flex;
+      gap: 0.4rem;
+      flex: 1;
+      justify-content: flex-end;
+    }
+    .hud-opt-btn {
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 0.4rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+    }
+    .hud-opt-btn.selected {
+      background: var(--accent);
+      border-color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* Круглые темы оформления */
+    .theme-picker {
+      display: flex;
+      gap: 0.65rem;
+    }
+    .theme-dot {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    }
+    .theme-dot.selected {
+      border-color: var(--accent);
+      transform: scale(1.1);
     }
 
     /* Модалка добавления книги */
@@ -310,32 +484,33 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.7);
+      background: rgba(0,0,0,0.72);
       backdrop-filter: blur(8px);
       align-items: center;
       justify-content: center;
-      padding: 1rem;
-      z-index: 150;
+      padding: 1.25rem;
+      z-index: 1500;
     }
     .add-modal.active { display: flex; }
     .add-box {
-      background: #24242c;
+      background: #242220;
       width: 100%;
       max-width: 440px;
       padding: 1.5rem;
-      border-radius: 12px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+      border-radius: 14px;
+      box-shadow: 0 24px 48px rgba(0,0,0,0.7);
       display: flex;
       flex-direction: column;
       gap: 1rem;
+      color: #fff;
     }
-    .add-box h2 { font-size: 1.2rem; }
+    .add-box h2 { font-size: 1.18rem; }
     .add-box input, .add-box textarea, .add-box select {
       width: 100%;
       padding: 0.65rem 0.8rem;
-      background: #18181f;
-      border: 1px solid #3c3c4a;
-      border-radius: 6px;
+      background: #181715;
+      border: 1px solid #443c36;
+      border-radius: 7px;
       color: #fff;
       font-size: 0.9rem;
       font-family: inherit;
@@ -346,17 +521,17 @@
       justify-content: flex-end;
       gap: 0.6rem;
     }
-    .btn-cancel { background: #3a3a46; }
+    .btn-cancel { background: #3c3834; }
   </style>
 </head>
-<body>
+<body class="theme-sepia">
 
   <header>
     <div class="brand">
       <div class="brand-icon">📖</div>
       <div class="brand-text">
         <h1>Книжная Полка</h1>
-        <span>Версия 1.0 • PWA Ready</span>
+        <span>Версия 1.02 • Жесты и Полноэкранный режим</span>
       </div>
     </div>
     <button id="open-add-dialog">+ Добавить книгу</button>
@@ -369,32 +544,81 @@
     </div>
   </div>
 
-  <!-- Читалка -->
-  <div class="reader-modal" id="reader">
-    <div class="reader-topbar">
-      <span id="book-title">Название книги</span>
-      <button class="close-btn" id="close-reader" title="Вернуться на полку">✕</button>
-    </div>
+  <!-- ПОЛНОЭКРАННАЯ ЧИТАЛКА ДЛЯ СМАРТФОНА -->
+  <div class="reader-screen" id="reader-screen">
+    <div class="reader-ribbon" id="reader-ribbon"></div>
 
-    <div class="book-stage">
-      <div class="page-sheet" id="book-page">
-        <div class="page-ribbon" id="page-ribbon"></div>
-        <div class="page-text" id="page-content"></div>
-        <div class="page-bottom">
-          <span id="page-counter">Стр. 1 из 1</span>
-          <span id="author-label">Автор</span>
+    <div class="tap-hint" id="tap-hint">Двойной тап — меню настроек</div>
+
+    <div class="reader-stage" id="reader-stage">
+      <div class="reader-page-content" id="reader-page-content">
+        <div class="book-body" id="book-body"></div>
+        <div class="reader-footer">
+          <span id="footer-page-info">Стр. 1 из 1</span>
+          <span id="footer-book-author">Автор</span>
         </div>
       </div>
     </div>
 
-    <div class="reader-controls">
-      <button class="btn-ctrl" id="prev-btn">← Назад</button>
-      <button class="btn-ctrl" id="bookmark-btn">🔖 Закладка</button>
-      <button class="btn-ctrl" id="next-btn">Вперед →</button>
+    <!-- ПЛАВАЮЩЕЕ МЕНЮ (HUD), ВСПЛЫВАЮЩЕЕ ПО ДВОЙНОМУ ТАПУ -->
+    <div class="reader-hud" id="reader-hud">
+      <div class="hud-topbar">
+        <button class="hud-btn" id="hud-back-btn">← Полка</button>
+        <span class="hud-title" id="hud-book-title">Название книги</span>
+        <button class="hud-btn" id="hud-bookmark-btn">🔖 Закладка</button>
+      </div>
+
+      <div class="hud-bottombar">
+        <!-- Слайдер быстрой навигации по страницам -->
+        <div class="scrubber-row">
+          <input type="range" class="scrubber" id="page-scrubber" min="1" max="1" value="1">
+          <span id="scrubber-label">1 / 1</span>
+        </div>
+
+        <!-- Размер шрифта -->
+        <div class="control-row">
+          <span class="control-label">Шрифт</span>
+          <div class="btn-group">
+            <button class="hud-opt-btn" id="font-dec">A -</button>
+            <span style="font-size: 0.85rem; padding: 0 0.5rem; display: flex; align-items: center;" id="font-size-label">18px</span>
+            <button class="hud-opt-btn" id="font-inc">A +</button>
+          </div>
+        </div>
+
+        <!-- Отступы страницы -->
+        <div class="control-row">
+          <span class="control-label">Отступы</span>
+          <div class="btn-group">
+            <button class="hud-opt-btn" data-margin="narrow">Узкие</button>
+            <button class="hud-opt-btn selected" data-margin="normal">Средние</button>
+            <button class="hud-opt-btn" data-margin="wide">Широкие</button>
+          </div>
+        </div>
+
+        <!-- Семейство шрифтов -->
+        <div class="control-row">
+          <span class="control-label">Гарнитура</span>
+          <div class="btn-group">
+            <button class="hud-opt-btn selected" data-font="serif">С засечками</button>
+            <button class="hud-opt-btn" data-font="sans">Без засечек</button>
+          </div>
+        </div>
+
+        <!-- Цветовая тема -->
+        <div class="control-row">
+          <span class="control-label">Тема</span>
+          <div class="theme-picker">
+            <div class="theme-dot selected" data-theme="sepia" style="background: #f4ebd8;" title="Сепия"></div>
+            <div class="theme-dot" data-theme="day" style="background: #faf7f2;" title="День"></div>
+            <div class="theme-dot" data-theme="mint" style="background: #e6ede4;" title="Мята"></div>
+            <div class="theme-dot" data-theme="night" style="background: #18181c;" title="Ночь"></div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Добавление книги -->
+  <!-- Модалка добавления книги -->
   <div class="add-modal" id="add-modal">
     <div class="add-box">
       <h2>Добавить книгу на полку</h2>
@@ -402,13 +626,13 @@
       <input type="text" id="new-author" placeholder="Автор">
       <select id="new-color">
         <option value="#8d2b2b">Бордовый переплет</option>
-        <option value="#1b5e20">Темно-зеленый переплет</option>
+        <option value="#1b5e20">Изумрудный переплет</option>
         <option value="#0d47a1">Синий сапфир</option>
         <option value="#4a148c">Глубокий фиолетовый</option>
         <option value="#b26a00">Кожаный охристый</option>
         <option value="#263238">Графитовый</option>
       </select>
-      <textarea id="new-text" placeholder="Вставьте текст произведения. Разделяйте страницы двойным переносом строки (Enter дважды)"></textarea>
+      <textarea id="new-text" placeholder="Вставьте текст. Двойной перенос строки (Enter дважды) автоматически делит текст на страницы."></textarea>
       <div class="modal-actions">
         <button class="btn-cancel" id="cancel-add">Отмена</button>
         <button id="save-book">Сохранить</button>
@@ -418,6 +642,7 @@
 
   <script>
     const STORAGE_KEY = 'shelf_books_v1';
+    const SETTINGS_KEY = 'shelf_settings_v102';
 
     const defaultBooks = [
       {
@@ -454,7 +679,7 @@
         bookmarks: [],
         pages: [
           "Глава I. Мистер Шерлок Холмс.\n\nШерлок Холмс сидел за столом и пил утренний чай. Я стоял на коврике у камина и разглядывал трость, забытую нашим вчерашним ночным посетителем.\n\nЭто была толстая дубовая палка с набалдашником из капа — из тех, что зовут «докторскими». Чуть ниже набалдашника красовалась серебряная пластинка с надписью: «Джеймсу Мортимеру от друзей по ЧКХ, 1884 г.»",
-          "— Ну, Уотсон, какого вы мнения об этом предмете? — спросил Холмс, не оборачиваясь ко мне кофейника.\n\n— Откуда вы знаете, чем я занят? Можно подумать, у вас глаза на затылке!\n\n— На затылке глаз нет, зато передо мной начищенный серебряный кофейник, — усмехнулся мой гениальный друг."
+          "— Ну, Уотсон, какого вы мнения об этом предмете? — спросил Холмс, не оборачиваясь от кофейника.\n\n— Откуда вы знаете, чем я занят? Можно подумать, у вас глаза на затылке!\n\n— На затылке глаз нет, зато передо мной начищенный серебряный кофейник, — усмехнулся мой гениальный друг."
         ]
       }
     ];
@@ -463,26 +688,80 @@
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       books = saved ? JSON.parse(saved) : defaultBooks;
-    } catch (e) {
+    } catch(e) {
       books = defaultBooks;
     }
 
+    let userSettings = {
+      fontSize: 18,
+      margin: 'normal',
+      fontFamily: 'serif',
+      theme: 'sepia'
+    };
+    try {
+      const savedSettings = localStorage.getItem(SETTINGS_KEY);
+      if (savedSettings) userSettings = Object.assign(userSettings, JSON.parse(savedSettings));
+    } catch(e) {}
+
     let activeBookId = null;
+    let isHudVisible = false;
 
+    // DOM Элементы
     const shelfEl = document.getElementById('bookshelf');
-    const readerEl = document.getElementById('reader');
-    const pageSheetEl = document.getElementById('book-page');
-    const pageContentEl = document.getElementById('page-content');
-    const pageCounterEl = document.getElementById('page-counter');
-    const bookTitleEl = document.getElementById('book-title');
-    const authorLabelEl = document.getElementById('author-label');
-    const bookmarkBtn = document.getElementById('bookmark-btn');
-    const ribbonEl = document.getElementById('page-ribbon');
+    const readerScreen = document.getElementById('reader-screen');
+    const readerStage = document.getElementById('reader-stage');
+    const readerPageContent = document.getElementById('reader-page-content');
+    const bookBodyEl = document.getElementById('book-body');
+    const footerPageInfo = document.getElementById('footer-page-info');
+    const footerBookAuthor = document.getElementById('footer-book-author');
+    const readerRibbon = document.getElementById('reader-ribbon');
+    const tapHint = document.getElementById('tap-hint');
 
+    // HUD элементы
+    const readerHud = document.getElementById('reader-hud');
+    const hudBookTitle = document.getElementById('hud-book-title');
+    const hudBookmarkBtn = document.getElementById('hud-bookmark-btn');
+    const hudBackBtn = document.getElementById('hud-back-btn');
+    const pageScrubber = document.getElementById('page-scrubber');
+    const scrubberLabel = document.getElementById('scrubber-label');
+    const fontSizeLabel = document.getElementById('font-size-label');
+
+    // Модалка добавления
     const addModal = document.getElementById('add-modal');
 
     function saveState() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(books));
+    }
+
+    function saveSettings() {
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(userSettings));
+      applySettings();
+    }
+
+    function applySettings() {
+      document.body.className = `theme-${userSettings.theme}`;
+      document.documentElement.style.setProperty('--font-size', `${userSettings.fontSize}px`);
+      fontSizeLabel.textContent = `${userSettings.fontSize}px`;
+
+      const marginMap = { narrow: '0.8rem', normal: '1.4rem', wide: '2.2rem' };
+      document.documentElement.style.setProperty('--margin-h', marginMap[userSettings.margin] || '1.4rem');
+
+      const fontMap = {
+        serif: 'Georgia, "Times New Roman", serif',
+        sans: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+      };
+      document.documentElement.style.setProperty('--font-family', fontMap[userSettings.fontFamily]);
+
+      // Обновляем селекторы в HUD
+      document.querySelectorAll('[data-margin]').forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.margin === userSettings.margin);
+      });
+      document.querySelectorAll('[data-font]').forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.font === userSettings.fontFamily);
+      });
+      document.querySelectorAll('.theme-dot').forEach(dot => {
+        dot.classList.toggle('selected', dot.dataset.theme === userSettings.theme);
+      });
     }
 
     function renderShelf() {
@@ -518,61 +797,137 @@
       const b = books.find(x => x.id === id);
       if (!b) return;
 
-      bookTitleEl.textContent = b.title;
-      authorLabelEl.textContent = b.author || '';
-      readerEl.classList.add('active');
-      renderCurrentPage(false);
+      hudBookTitle.textContent = b.title;
+      footerBookAuthor.textContent = b.author || '';
+
+      pageScrubber.max = b.pages.length;
+      pageScrubber.value = b.currentPage + 1;
+
+      readerScreen.classList.add('active');
+      renderPage(false);
+
+      // Показ подсказки о двойном тапе при первом открытии
+      tapHint.classList.add('show');
+      setTimeout(() => tapHint.classList.remove('show'), 2500);
     }
 
-    function renderCurrentPage(withAnimation = false, direction = 'next') {
+    function renderPage(animate = false, direction = 'next') {
       const b = books.find(x => x.id === activeBookId);
       if (!b) return;
 
-      if (withAnimation) {
-        const animClass = direction === 'next' ? 'flipping-forward' : 'flipping-back';
-        pageSheetEl.classList.add(animClass);
+      if (animate) {
+        const animClass = direction === 'next' ? 'flipping-left' : 'flipping-right';
+        readerPageContent.classList.add(animClass);
         setTimeout(() => {
-          pageSheetEl.style.transition = 'none';
-          pageSheetEl.classList.remove(animClass);
+          readerPageContent.style.transition = 'none';
+          readerPageContent.classList.remove(animClass);
           updatePageDOM(b);
           setTimeout(() => {
-            pageSheetEl.style.transition = '';
-          }, 40);
-        }, 280);
+            readerPageContent.style.transition = '';
+          }, 30);
+        }, 220);
       } else {
         updatePageDOM(b);
       }
     }
 
     function updatePageDOM(b) {
-      pageContentEl.textContent = b.pages[b.currentPage] || '';
-      pageCounterEl.textContent = `Стр. ${b.currentPage + 1} из ${b.pages.length}`;
+      bookBodyEl.textContent = b.pages[b.currentPage] || '';
+      bookBodyEl.scrollTop = 0;
+
+      footerPageInfo.textContent = `Стр. ${b.currentPage + 1} из ${b.pages.length}`;
+      pageScrubber.value = b.currentPage + 1;
+      scrubberLabel.textContent = `${b.currentPage + 1} / ${b.pages.length}`;
 
       const isMarked = b.bookmarks && b.bookmarks.includes(b.currentPage);
-      ribbonEl.classList.toggle('visible', isMarked);
-      bookmarkBtn.classList.toggle('bookmarked', isMarked);
-      bookmarkBtn.textContent = isMarked ? '✓ В закладках' : '🔖 Закладка';
+      readerRibbon.classList.toggle('visible', isMarked);
+      hudBookmarkBtn.classList.toggle('active-bm', isMarked);
+      hudBookmarkBtn.textContent = isMarked ? '✓ В закладках' : '🔖 Закладка';
 
       saveState();
     }
 
-    document.getElementById('next-btn').onclick = () => {
+    function nextPage() {
       const b = books.find(x => x.id === activeBookId);
       if (b && b.currentPage < b.pages.length - 1) {
         b.currentPage++;
-        renderCurrentPage(true, 'next');
+        renderPage(true, 'next');
       }
-    };
+    }
 
-    document.getElementById('prev-btn').onclick = () => {
+    function prevPage() {
       const b = books.find(x => x.id === activeBookId);
       if (b && b.currentPage > 0) {
         b.currentPage--;
-        renderCurrentPage(true, 'prev');
+        renderPage(true, 'prev');
       }
+    }
+
+    function toggleHud() {
+      isHudVisible = !isHudVisible;
+      readerHud.classList.toggle('active', isHudVisible);
+    }
+
+    // ==========================================
+    // СЕНСОРНЫЕ ЖЕСТЫ (СВАЙП) И ДВОЙНОЙ ТАП
+    // ==========================================
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let lastTapTime = 0;
+
+    readerStage.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+      }
+    }, { passive: true });
+
+    readerStage.addEventListener('touchend', (e) => {
+      if (e.changedTouches.length !== 1) return;
+
+      const touchEndX = e.changedTouches[0].clientX;
+      const touchEndY = e.changedTouches[0].clientY;
+
+      const diffX = touchEndX - touchStartX;
+      const diffY = touchEndY - touchStartY;
+
+      // Если это горизонтальный свайп с амплитудой > 48px
+      if (Math.abs(diffX) > 48 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
+        if (diffX < 0) {
+          nextPage(); // Свайп влево -> следующая страница
+        } else {
+          prevPage(); // Свайп вправо -> предыдущая страница
+        }
+        return;
+      }
+
+      // Проверка на двойной тап (Double Tap)
+      const now = Date.now();
+      const timeDiff = now - lastTapTime;
+      if (timeDiff < 320 && Math.abs(diffX) < 15 && Math.abs(diffY) < 15) {
+        toggleHud();
+        lastTapTime = 0;
+      } else {
+        lastTapTime = now;
+      }
+    }, { passive: true });
+
+    // Двойной клик для ПК мыши
+    readerStage.addEventListener('dblclick', () => {
+      toggleHud();
+    });
+
+    // ==========================================
+    // НАСТРОЙКИ В МЕНЮ ЧИТАЛКИ (HUD)
+    // ==========================================
+    hudBackBtn.onclick = () => {
+      readerScreen.classList.remove('active');
+      isHudVisible = false;
+      readerHud.classList.remove('active');
+      renderShelf();
     };
 
-    bookmarkBtn.onclick = () => {
+    hudBookmarkBtn.onclick = () => {
       const b = books.find(x => x.id === activeBookId);
       if (!b) return;
       if (!b.bookmarks) b.bookmarks = [];
@@ -586,18 +941,54 @@
       updatePageDOM(b);
     };
 
-    document.getElementById('close-reader').onclick = () => {
-      readerEl.classList.remove('active');
-      renderShelf();
+    pageScrubber.oninput = (e) => {
+      const b = books.find(x => x.id === activeBookId);
+      if (!b) return;
+      const targetPage = parseInt(e.target.value, 10) - 1;
+      b.currentPage = Math.max(0, Math.min(targetPage, b.pages.length - 1));
+      updatePageDOM(b);
     };
 
-    // Добавление новой книги
-    document.getElementById('open-add-dialog').onclick = () => {
-      addModal.classList.add('active');
+    document.getElementById('font-inc').onclick = () => {
+      if (userSettings.fontSize < 32) {
+        userSettings.fontSize += 2;
+        saveSettings();
+      }
     };
-    document.getElementById('cancel-add').onclick = () => {
-      addModal.classList.remove('active');
+
+    document.getElementById('font-dec').onclick = () => {
+      if (userSettings.fontSize > 12) {
+        userSettings.fontSize -= 2;
+        saveSettings();
+      }
     };
+
+    document.querySelectorAll('[data-margin]').forEach(btn => {
+      btn.onclick = () => {
+        userSettings.margin = btn.dataset.margin;
+        saveSettings();
+      };
+    });
+
+    document.querySelectorAll('[data-font]').forEach(btn => {
+      btn.onclick = () => {
+        userSettings.fontFamily = btn.dataset.font;
+        saveSettings();
+      };
+    });
+
+    document.querySelectorAll('.theme-dot').forEach(dot => {
+      dot.onclick = () => {
+        userSettings.theme = dot.dataset.theme;
+        saveSettings();
+      };
+    });
+
+    // ==========================================
+    // ДОБАВЛЕНИЕ КНИГИ
+    // ==========================================
+    document.getElementById('open-add-dialog').onclick = () => addModal.classList.add('active');
+    document.getElementById('cancel-add').onclick = () => addModal.classList.remove('active');
 
     document.getElementById('save-book').onclick = () => {
       const titleInput = document.getElementById('new-title').value.trim();
@@ -633,17 +1024,21 @@
       addModal.classList.remove('active');
     };
 
-    // Закрытие по клавише Escape
+    // Клавиши со стрелками и Escape для удобства
     window.addEventListener('keydown', (e) => {
+      if (!readerScreen.classList.contains('active')) return;
+      if (e.key === 'ArrowRight') nextPage();
+      if (e.key === 'ArrowLeft') prevPage();
       if (e.key === 'Escape') {
-        if (readerEl.classList.contains('active')) {
-          readerEl.classList.remove('active');
-          renderShelf();
+        if (isHudVisible) {
+          toggleHud();
+        } else {
+          hudBackBtn.click();
         }
-        addModal.classList.remove('active');
       }
     });
 
+    applySettings();
     renderShelf();
   </script>
 </body>
