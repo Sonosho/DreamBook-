@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Полка — Читалка v1.02</title>
+  <title>Полка — Читалка v1.03</title>
 
   <!-- PWA & Mobile Web App Meta -->
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,20 +12,20 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#2c221e">
 
-  <!-- SVG Book Icon -->
+  <!-- Векторная мобильная иконка -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='110' fill='%238d2b2b'/%3E%3Cpath d='M110 120c45-20 95-20 146 0 51-20 101-20 146 0v240c-45-20-95-20-146 0-51-20-101-20-146 0z' fill='%23fbf0d9'/%3E%3Cpath d='M256 120v240' stroke='%233e2723' stroke-width='14' stroke-linecap='round'/%3E%3Cpath d='M130 180c35-15 80-15 110 0M130 230c35-15 80-15 110 0M130 280c35-15 80-15 110 0M272 180c30-15 75-15 110 0M272 230c30-15 75-15 110 0M272 280c30-15 75-15 110 0' stroke='%23c7b299' stroke-width='8' stroke-linecap='round'/%3E%3Cpath d='M380 120v110l-25-20-25 20v-110' fill='%23d84315'/%3E%3C/svg%3E">
   <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='110' fill='%238d2b2b'/%3E%3Cpath d='M110 120c45-20 95-20 146 0 51-20 101-20 146 0v240c-45-20-95-20-146 0-51-20-101-20-146 0z' fill='%23fbf0d9'/%3E%3Cpath d='M256 120v240' stroke='%233e2723' stroke-width='14' stroke-linecap='round'/%3E%3Cpath d='M130 180c35-15 80-15 110 0M130 230c35-15 80-15 110 0M130 280c35-15 80-15 110 0M272 180c30-15 75-15 110 0M272 230c30-15 75-15 110 0M272 280c30-15 75-15 110 0' stroke='%23c7b299' stroke-width='8' stroke-linecap='round'/%3E%3Cpath d='M380 120v110l-25-20-25 20v-110' fill='%23d84315'/%3E%3C/svg%3E">
 
   <style>
     :root {
-      /* Светлый текстурированный фон полки: теплое дерево/шпон */
-      --shelf-bg: #4a382c;
-      --shelf-wood: #2b1b12;
-      --shelf-top: #6a4a35;
-      --shelf-plank: #845d43;
+      /* Светлый текстурированный фон полки */
+      --shelf-bg: #453428;
+      --shelf-wood: #26170f;
+      --shelf-plank: #7c553b;
 
-      /* Цвета читалки (тема по умолчанию - Сепия) */
+      /* Цвета книги по умолчанию (Сепия) */
       --reader-bg: #f4ebd8;
+      --reader-spine: #dfd4be;
       --reader-text: #2c241c;
       --reader-sub: #827263;
       --reader-border: rgba(44, 36, 28, 0.12);
@@ -37,24 +37,28 @@
     /* Темы читалки */
     body.theme-sepia {
       --reader-bg: #f4ebd8;
+      --reader-spine: #dfd4be;
       --reader-text: #2c241c;
       --reader-sub: #827263;
       --reader-border: rgba(44, 36, 28, 0.12);
     }
     body.theme-day {
       --reader-bg: #faf7f2;
+      --reader-spine: #e8e3dc;
       --reader-text: #1d1d1f;
       --reader-sub: #86868b;
       --reader-border: rgba(0, 0, 0, 0.08);
     }
     body.theme-night {
       --reader-bg: #18181c;
+      --reader-spine: #111114;
       --reader-text: #d8d8e0;
       --reader-sub: #787885;
       --reader-border: rgba(255, 255, 255, 0.1);
     }
     body.theme-mint {
       --reader-bg: #e6ede4;
+      --reader-spine: #cfded0;
       --reader-text: #1d3322;
       --reader-sub: #637a68;
       --reader-border: rgba(29, 51, 34, 0.12);
@@ -73,18 +77,17 @@
       display: flex;
       flex-direction: column;
       overflow-x: hidden;
-      /* Уютная теплая текстура полки: вертикальный древесный ритм и мягкие тени */
       background-color: var(--shelf-bg);
       background-image: 
-        repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 2px, transparent 2px, transparent 40px),
-        linear-gradient(180deg, #3d2d22 0%, #2e2017 100%);
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.025) 0px, rgba(255,255,255,0.025) 2px, transparent 2px, transparent 40px),
+        linear-gradient(180deg, #3d2d22 0%, #291c14 100%);
       color: #fff;
     }
 
     /* Шапка полки */
     header {
       padding: 0.9rem 1.25rem;
-      background: rgba(30, 20, 15, 0.78);
+      background: rgba(30, 20, 15, 0.8);
       backdrop-filter: blur(12px);
       display: flex;
       justify-content: space-between;
@@ -150,7 +153,7 @@
     }
     .books-grid {
       display: flex;
-      gap: 1.25rem;
+      gap: 1.35rem;
       align-items: flex-end;
       padding: 0 0.8rem 0.2rem;
       overflow-x: auto;
@@ -160,7 +163,7 @@
     .books-grid::-webkit-scrollbar { height: 6px; }
     .books-grid::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
 
-    /* Деревянная планка полки с фактурой */
+    /* Деревянная полка */
     .wood-board {
       height: 20px;
       background: linear-gradient(180deg, var(--shelf-plank) 0%, var(--shelf-wood) 100%);
@@ -182,8 +185,8 @@
     /* Книга на полке */
     .book-item {
       flex-shrink: 0;
-      width: 124px;
-      height: 180px;
+      width: 126px;
+      height: 182px;
       border-radius: 3px 10px 10px 3px;
       padding: 0.9rem 0.8rem;
       cursor: pointer;
@@ -224,12 +227,11 @@
       align-items: flex-end;
     }
     .bookmark-flag {
-      color: #ffd54f;
       font-size: 0.9rem;
     }
 
     /* ========================================================
-       ПОЛНОЭКРАННАЯ ЧИТАЛКА (FULLSCREEN READER ДЛЯ СМАРТФОНА)
+       ПОЛНОЭКРАННАЯ ЧИТАЛКА (FULLSCREEN READER v1.03)
        ======================================================== */
     .reader-screen {
       display: none;
@@ -251,52 +253,27 @@
       display: flex;
     }
 
-    /* Контейнер страницы на весь экран */
+    /* 3D Сцена книги */
     .reader-stage {
       flex: 1;
       width: 100%;
       height: 100%;
       position: relative;
       overflow: hidden;
+      perspective: 2200px;
+      perspective-origin: center center;
+    }
+
+    /* Листы книги */
+    .page-surface {
+      position: absolute;
+      inset: 0;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       padding: env(safe-area-inset-top, 16px) env(safe-area-inset-right, 20px) env(safe-area-inset-bottom, 16px) env(safe-area-inset-left, 20px);
-    }
-
-    /* Индикатор закладки (ленточка в правом верхнем углу) */
-    .reader-ribbon {
-      display: none;
-      position: absolute;
-      top: 0;
-      right: 28px;
-      width: 24px;
-      height: 42px;
-      background: var(--accent);
-      clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 75%, 0 100%);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-      z-index: 5;
-    }
-    .reader-ribbon.visible { display: block; }
-
-    /* Область текста */
-    .reader-page-content {
-      flex: 1;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.28s ease;
-      touch-action: pan-y;
-    }
-    .reader-page-content.flipping-left {
-      transform: translateX(-40px) rotateY(-10deg);
-      opacity: 0.1;
-    }
-    .reader-page-content.flipping-right {
-      transform: translateX(40px) rotateY(10deg);
-      opacity: 0.1;
+      background: var(--reader-bg);
+      box-shadow: inset 18px 0 28px rgba(0,0,0,0.04);
     }
 
     /* Текст книги */
@@ -312,7 +289,6 @@
     }
     .book-body::-webkit-scrollbar { display: none; }
 
-    /* Нижний колонтитул на странице */
     .reader-footer {
       display: flex;
       justify-content: space-between;
@@ -323,26 +299,127 @@
       border-top: 1px solid var(--reader-border);
     }
 
-    /* Всплывающая подсказка о двойном тапе */
-    .tap-hint {
+    /* ========================================================
+       РЕАЛИСТИЧНЫЙ ЛИСТ ПЕРЕЛИСТЫВАНИЯ С ОБЪЕМНОЙ ТЕНЬЮ (3D)
+       ======================================================== */
+    .flipping-leaf {
       position: absolute;
-      top: 24px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.75);
-      color: #fff;
-      font-size: 0.78rem;
-      padding: 0.35rem 0.85rem;
-      border-radius: 20px;
+      inset: 0;
       pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.4s ease;
-      z-index: 20;
+      display: none;
+      z-index: 40;
+      transform-style: preserve-3d;
+      backface-visibility: hidden;
     }
-    .tap-hint.show { opacity: 1; }
+    .flipping-leaf.active-forward {
+      display: block;
+      transform-origin: left center;
+      animation: flipBookForward 0.52s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+    }
+    .flipping-leaf.active-back {
+      display: block;
+      transform-origin: right center;
+      animation: flipBookBack 0.52s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+    }
+
+    @keyframes flipBookForward {
+      0% {
+        transform: rotateY(0deg);
+        box-shadow: -10px 0 35px rgba(0,0,0,0.1);
+      }
+      45% {
+        box-shadow: -25px 0 50px rgba(0,0,0,0.35);
+      }
+      100% {
+        transform: rotateY(-180deg);
+        box-shadow: 0 0 0 rgba(0,0,0,0);
+      }
+    }
+
+    @keyframes flipBookBack {
+      0% {
+        transform: rotateY(0deg);
+        box-shadow: 10px 0 35px rgba(0,0,0,0.1);
+      }
+      45% {
+        box-shadow: 25px 0 50px rgba(0,0,0,0.35);
+      }
+      100% {
+        transform: rotateY(180deg);
+        box-shadow: 0 0 0 rgba(0,0,0,0);
+      }
+    }
+
+    /* Тень изгиба листа */
+    .leaf-shading {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(90deg, rgba(0,0,0,0.18) 0%, rgba(255,255,255,0.15) 30%, rgba(0,0,0,0.22) 100%);
+      opacity: 0.8;
+    }
 
     /* ========================================================
-       ПЛАВАЮЩЕЕ МЕНЮ ЧИТАЛКИ (HUD), ВЫЗЫВАЕМОЕ ПО ДВОЙНОМУ ТАПУ
+       КРАСИВАЯ ПОЛУПРОЗРАЧНАЯ ЗАКЛАДКА (НЕ ЗАКРЫВАЕТ ТЕКСТ)
+       ======================================================== */
+    .translucent-ribbon {
+      position: absolute;
+      top: 0;
+      right: 28px;
+      width: 26px;
+      height: 90px;
+      z-index: 25;
+      pointer-events: none;
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 82%, 0 100%);
+      /* Матовое стекло и мягкая полупрозрачность */
+      backdrop-filter: blur(1.5px);
+      -webkit-backdrop-filter: blur(1.5px);
+      border-left: 1px solid rgba(255,255,255,0.35);
+      border-right: 1px solid rgba(0,0,0,0.15);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.22);
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s;
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    .translucent-ribbon.visible {
+      transform: translateY(0);
+      opacity: 0.85;
+    }
+    /* Индикатор автозакладки (там где остановился) */
+    .translucent-ribbon.auto-mode {
+      height: 44px;
+      opacity: 0.55;
+      border-bottom: 2px dashed rgba(255,255,255,0.4);
+    }
+
+    /* Всплывающие подсказки и бейджи */
+    .toast-pill {
+      position: absolute;
+      top: calc(env(safe-area-inset-top, 0px) + 20px);
+      left: 50%;
+      transform: translateX(-50%) translateY(-10px);
+      background: rgba(18, 18, 22, 0.88);
+      color: #fff;
+      font-size: 0.82rem;
+      padding: 0.45rem 1rem;
+      border-radius: 24px;
+      pointer-events: none;
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      z-index: 1200;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 18px rgba(0,0,0,0.35);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .toast-pill.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* ========================================================
+       ПЛАВАЮЩЕЕ МЕНЮ (HUD), ОТКРЫВАЕМОЕ И ЗАКРЫВАЕМОЕ СВАЙПОМ ВВЕРХ
        ======================================================== */
     .reader-hud {
       position: absolute;
@@ -353,7 +430,7 @@
       justify-content: space-between;
       opacity: 0;
       visibility: hidden;
-      transition: opacity 0.25s ease, visibility 0.25s;
+      transition: opacity 0.28s ease, visibility 0.28s;
       z-index: 100;
     }
     .reader-hud.active {
@@ -362,7 +439,6 @@
       pointer-events: auto;
     }
 
-    /* Верхняя плашка HUD */
     .hud-topbar {
       padding: calc(env(safe-area-inset-top, 0px) + 0.8rem) 1.2rem 0.8rem;
       background: rgba(22, 22, 26, 0.88);
@@ -372,7 +448,13 @@
       align-items: center;
       color: #fff;
       box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+      transform: translateY(-20px);
+      transition: transform 0.3s ease;
     }
+    .reader-hud.active .hud-topbar {
+      transform: translateY(0);
+    }
+
     .hud-title {
       font-size: 0.92rem;
       font-weight: 600;
@@ -391,23 +473,27 @@
       cursor: pointer;
     }
     .hud-btn.active-bm {
-      background: #f57c00;
+      background: var(--accent);
     }
 
-    /* Нижняя панель настроек HUD */
     .hud-bottombar {
       padding: 1.2rem 1.25rem calc(env(safe-area-inset-bottom, 0px) + 1.2rem);
       background: rgba(22, 22, 26, 0.94);
-      backdrop-filter: blur(16px);
+      backdrop-filter: blur(18px);
       color: #fff;
       display: flex;
       flex-direction: column;
       gap: 1.1rem;
       box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
-      border-radius: 18px 18px 0 0;
+      border-radius: 20px 20px 0 0;
+      transform: translateY(30px);
+      transition: transform 0.3s ease;
+    }
+    .reader-hud.active .hud-bottombar {
+      transform: translateY(0);
     }
 
-    /* Ползунок прогресса */
+    /* Настройки в HUD */
     .scrubber-row {
       display: flex;
       align-items: center;
@@ -426,7 +512,6 @@
       cursor: pointer;
     }
 
-    /* Строки настроек */
     .control-row {
       display: flex;
       justify-content: space-between;
@@ -461,7 +546,6 @@
       font-weight: 700;
     }
 
-    /* Круглые темы оформления */
     .theme-picker {
       display: flex;
       gap: 0.65rem;
@@ -477,6 +561,13 @@
     .theme-dot.selected {
       border-color: var(--accent);
       transform: scale(1.1);
+    }
+
+    .hud-hint-swipe {
+      text-align: center;
+      font-size: 0.72rem;
+      color: #888;
+      margin-top: -0.4rem;
     }
 
     /* Модалка добавления книги */
@@ -531,7 +622,7 @@
       <div class="brand-icon">📖</div>
       <div class="brand-text">
         <h1>Книжная Полка</h1>
-        <span>Версия 1.02 • Жесты и Полноэкранный режим</span>
+        <span>Версия 1.03 • 3D Страницы & Свайп-меню</span>
       </div>
     </div>
     <button id="open-add-dialog">+ Добавить книгу</button>
@@ -544,23 +635,35 @@
     </div>
   </div>
 
-  <!-- ПОЛНОЭКРАННАЯ ЧИТАЛКА ДЛЯ СМАРТФОНА -->
+  <!-- ПОЛНОЭКРАННАЯ ЧИТАЛКА v1.03 -->
   <div class="reader-screen" id="reader-screen">
-    <div class="reader-ribbon" id="reader-ribbon"></div>
-
-    <div class="tap-hint" id="tap-hint">Двойной тап — меню настроек</div>
+    <div class="toast-pill" id="toast-pill"></div>
 
     <div class="reader-stage" id="reader-stage">
-      <div class="reader-page-content" id="reader-page-content">
+      <!-- Полупрозрачная закладка (текст просвечивает сквозь нее) -->
+      <div class="translucent-ribbon" id="translucent-ribbon"></div>
+
+      <!-- Основная страница книги -->
+      <div class="page-surface" id="main-page-surface">
         <div class="book-body" id="book-body"></div>
         <div class="reader-footer">
           <span id="footer-page-info">Стр. 1 из 1</span>
           <span id="footer-book-author">Автор</span>
         </div>
       </div>
+
+      <!-- Анимированный лист для реалистичного 3D перелистывания -->
+      <div class="flipping-leaf page-surface" id="flipping-leaf">
+        <div class="book-body" id="leaf-body"></div>
+        <div class="reader-footer">
+          <span id="leaf-page-info"></span>
+          <span id="leaf-book-author"></span>
+        </div>
+        <div class="leaf-shading"></div>
+      </div>
     </div>
 
-    <!-- ПЛАВАЮЩЕЕ МЕНЮ (HUD), ВСПЛЫВАЮЩЕЕ ПО ДВОЙНОМУ ТАПУ -->
+    <!-- МЕНЮ НАСТРОЕК (HUD), ВЫЗЫВАЕТСЯ И СКРЫВАЕТСЯ СВАЙПОМ ВВЕРХ -->
     <div class="reader-hud" id="reader-hud">
       <div class="hud-topbar">
         <button class="hud-btn" id="hud-back-btn">← Полка</button>
@@ -569,7 +672,9 @@
       </div>
 
       <div class="hud-bottombar">
-        <!-- Слайдер быстрой навигации по страницам -->
+        <div class="hud-hint-swipe">Свайп вверх — скрыть меню</div>
+
+        <!-- Ползунок страниц -->
         <div class="scrubber-row">
           <input type="range" class="scrubber" id="page-scrubber" min="1" max="1" value="1">
           <span id="scrubber-label">1 / 1</span>
@@ -585,7 +690,7 @@
           </div>
         </div>
 
-        <!-- Отступы страницы -->
+        <!-- Поля страницы -->
         <div class="control-row">
           <span class="control-label">Отступы</span>
           <div class="btn-group">
@@ -595,7 +700,7 @@
           </div>
         </div>
 
-        <!-- Семейство шрифтов -->
+        <!-- Гарнитура -->
         <div class="control-row">
           <span class="control-label">Гарнитура</span>
           <div class="btn-group">
@@ -625,12 +730,12 @@
       <input type="text" id="new-title" placeholder="Название книги" required>
       <input type="text" id="new-author" placeholder="Автор">
       <select id="new-color">
-        <option value="#8d2b2b">Бордовый переплет</option>
-        <option value="#1b5e20">Изумрудный переплет</option>
-        <option value="#0d47a1">Синий сапфир</option>
-        <option value="#4a148c">Глубокий фиолетовый</option>
-        <option value="#b26a00">Кожаный охристый</option>
-        <option value="#263238">Графитовый</option>
+        <option value="#8d2b2b">Бордовый переплет (Рубиновая закладка)</option>
+        <option value="#1b5e20">Изумрудный переплет (Изумрудная закладка)</option>
+        <option value="#0d47a1">Синий сапфир (Сапфировая закладка)</option>
+        <option value="#4a148c">Фиолетовый переплет (Аметистовая закладка)</option>
+        <option value="#b26a00">Охристый переплет (Янтарная закладка)</option>
+        <option value="#263238">Графитовый переплет (Дымчатая закладка)</option>
       </select>
       <textarea id="new-text" placeholder="Вставьте текст. Двойной перенос строки (Enter дважды) автоматически делит текст на страницы."></textarea>
       <div class="modal-actions">
@@ -643,6 +748,16 @@
   <script>
     const STORAGE_KEY = 'shelf_books_v1';
     const SETTINGS_KEY = 'shelf_settings_v102';
+
+    // Цвета полупрозрачных закладок по тонам книг
+    const ribbonColorMap = {
+      '#8d2b2b': 'rgba(216, 67, 21, 0.45)',  // Рубин
+      '#1b5e20': 'rgba(46, 125, 50, 0.45)',  // Изумруд
+      '#0d47a1': 'rgba(21, 101, 192, 0.45)', // Сапфир
+      '#4a148c': 'rgba(123, 31, 162, 0.45)', // Аметист
+      '#b26a00': 'rgba(245, 124, 0, 0.45)',  // Янтарь
+      '#263238': 'rgba(84, 110, 122, 0.45)'  // Дымчатый
+    };
 
     const defaultBooks = [
       {
@@ -705,19 +820,25 @@
 
     let activeBookId = null;
     let isHudVisible = false;
+    let isFlipping = false;
 
-    // DOM Элементы
+    // DOM
     const shelfEl = document.getElementById('bookshelf');
     const readerScreen = document.getElementById('reader-screen');
     const readerStage = document.getElementById('reader-stage');
-    const readerPageContent = document.getElementById('reader-page-content');
     const bookBodyEl = document.getElementById('book-body');
     const footerPageInfo = document.getElementById('footer-page-info');
     const footerBookAuthor = document.getElementById('footer-book-author');
-    const readerRibbon = document.getElementById('reader-ribbon');
-    const tapHint = document.getElementById('tap-hint');
+    const ribbonEl = document.getElementById('translucent-ribbon');
+    const toastPill = document.getElementById('toast-pill');
 
-    // HUD элементы
+    // 3D Leaf
+    const leafEl = document.getElementById('flipping-leaf');
+    const leafBody = document.getElementById('leaf-body');
+    const leafPageInfo = document.getElementById('leaf-page-info');
+    const leafBookAuthor = document.getElementById('leaf-book-author');
+
+    // HUD
     const readerHud = document.getElementById('reader-hud');
     const hudBookTitle = document.getElementById('hud-book-title');
     const hudBookmarkBtn = document.getElementById('hud-bookmark-btn');
@@ -726,7 +847,7 @@
     const scrubberLabel = document.getElementById('scrubber-label');
     const fontSizeLabel = document.getElementById('font-size-label');
 
-    // Модалка добавления
+    // Модалка
     const addModal = document.getElementById('add-modal');
 
     function saveState() {
@@ -736,6 +857,12 @@
     function saveSettings() {
       localStorage.setItem(SETTINGS_KEY, JSON.stringify(userSettings));
       applySettings();
+    }
+
+    function showToast(msg) {
+      toastPill.textContent = msg;
+      toastPill.classList.add('show');
+      setTimeout(() => toastPill.classList.remove('show'), 2200);
     }
 
     function applySettings() {
@@ -752,7 +879,6 @@
       };
       document.documentElement.style.setProperty('--font-family', fontMap[userSettings.fontFamily]);
 
-      // Обновляем селекторы в HUD
       document.querySelectorAll('[data-margin]').forEach(btn => {
         btn.classList.toggle('selected', btn.dataset.margin === userSettings.margin);
       });
@@ -771,14 +897,14 @@
         item.className = 'book-item';
         item.style.backgroundColor = b.color || '#8d2b2b';
 
-        const hasBm = b.bookmarks && b.bookmarks.length > 0;
+        const hasManualBm = b.bookmarks && b.bookmarks.length > 0;
         const progress = Math.round(((b.currentPage + 1) / b.pages.length) * 100);
 
         item.innerHTML = `
           <div class="book-title">${escapeHtml(b.title)}</div>
           <div class="book-meta">
             <span>${progress}%</span>
-            ${hasBm ? '<span class="bookmark-flag">🔖</span>' : ''}
+            <span class="bookmark-flag">${hasManualBm ? '🔖' : '📍'}</span>
           </div>
         `;
         item.onclick = () => openReader(b.id);
@@ -803,35 +929,17 @@
       pageScrubber.max = b.pages.length;
       pageScrubber.value = b.currentPage + 1;
 
+      // Устанавливаем индивидуальный цвет полупрозрачной закладки для книги
+      const ribbonColor = ribbonColorMap[b.color] || 'rgba(216, 67, 21, 0.45)';
+      ribbonEl.style.background = `linear-gradient(180deg, ${ribbonColor} 0%, rgba(255,255,255,0.18) 100%)`;
+
       readerScreen.classList.add('active');
-      renderPage(false);
+      renderPageDOM(b);
 
-      // Показ подсказки о двойном тапе при первом открытии
-      tapHint.classList.add('show');
-      setTimeout(() => tapHint.classList.remove('show'), 2500);
+      showToast('Свайп вверх — меню • Двойной тап — закладка');
     }
 
-    function renderPage(animate = false, direction = 'next') {
-      const b = books.find(x => x.id === activeBookId);
-      if (!b) return;
-
-      if (animate) {
-        const animClass = direction === 'next' ? 'flipping-left' : 'flipping-right';
-        readerPageContent.classList.add(animClass);
-        setTimeout(() => {
-          readerPageContent.style.transition = 'none';
-          readerPageContent.classList.remove(animClass);
-          updatePageDOM(b);
-          setTimeout(() => {
-            readerPageContent.style.transition = '';
-          }, 30);
-        }, 220);
-      } else {
-        updatePageDOM(b);
-      }
-    }
-
-    function updatePageDOM(b) {
+    function renderPageDOM(b) {
       bookBodyEl.textContent = b.pages[b.currentPage] || '';
       bookBodyEl.scrollTop = 0;
 
@@ -839,27 +947,66 @@
       pageScrubber.value = b.currentPage + 1;
       scrubberLabel.textContent = `${b.currentPage + 1} / ${b.pages.length}`;
 
-      const isMarked = b.bookmarks && b.bookmarks.includes(b.currentPage);
-      readerRibbon.classList.toggle('visible', isMarked);
-      hudBookmarkBtn.classList.toggle('active-bm', isMarked);
-      hudBookmarkBtn.textContent = isMarked ? '✓ В закладках' : '🔖 Закладка';
+      const isManual = b.bookmarks && b.bookmarks.includes(b.currentPage);
+
+      // Логика закладок:
+      // 1. Ручная закладка: яркая полупрозрачная лента на всю длину.
+      // 2. Авто-закладка (где остановился): нежная полупрозрачная метка.
+      if (isManual) {
+        ribbonEl.className = 'translucent-ribbon visible';
+        hudBookmarkBtn.classList.add('active-bm');
+        hudBookmarkBtn.textContent = '✓ Закладка снята';
+      } else {
+        // Автоматическая закладка текущего прогресса
+        ribbonEl.className = 'translucent-ribbon visible auto-mode';
+        hudBookmarkBtn.classList.remove('active-bm');
+        hudBookmarkBtn.textContent = '🔖 Поставить закладку';
+      }
 
       saveState();
+    }
+
+    // ==========================================
+    // РЕАЛИСТИЧНОЕ 3D ПЕРЕЛИСТЫВАНИЕ СТРАНИЦЫ
+    // ==========================================
+    function flipPageTo(targetIndex, direction) {
+      const b = books.find(x => x.id === activeBookId);
+      if (!b || isFlipping) return;
+
+      if (targetIndex < 0 || targetIndex >= b.pages.length) return;
+
+      isFlipping = true;
+
+      // Подготавливаем анимируемый лист с текущим текстом
+      leafBody.textContent = b.pages[b.currentPage] || '';
+      leafPageInfo.textContent = `Стр. ${b.currentPage + 1} из ${b.pages.length}`;
+      leafBookAuthor.textContent = b.author || '';
+
+      // Переключаем нижний лист на следующую страницу заранее
+      b.currentPage = targetIndex;
+      renderPageDOM(b);
+
+      // Запускаем 3D-анимацию изгиба страницы
+      const animClass = direction === 'forward' ? 'active-forward' : 'active-back';
+      leafEl.className = `flipping-leaf page-surface ${animClass}`;
+
+      setTimeout(() => {
+        leafEl.className = 'flipping-leaf page-surface';
+        isFlipping = false;
+      }, 510);
     }
 
     function nextPage() {
       const b = books.find(x => x.id === activeBookId);
       if (b && b.currentPage < b.pages.length - 1) {
-        b.currentPage++;
-        renderPage(true, 'next');
+        flipPageTo(b.currentPage + 1, 'forward');
       }
     }
 
     function prevPage() {
       const b = books.find(x => x.id === activeBookId);
       if (b && b.currentPage > 0) {
-        b.currentPage--;
-        renderPage(true, 'prev');
+        flipPageTo(b.currentPage - 1, 'back');
       }
     }
 
@@ -868,21 +1015,37 @@
       readerHud.classList.toggle('active', isHudVisible);
     }
 
+    function toggleBookmark() {
+      const b = books.find(x => x.id === activeBookId);
+      if (!b) return;
+      if (!b.bookmarks) b.bookmarks = [];
+
+      const idx = b.bookmarks.indexOf(b.currentPage);
+      if (idx === -1) {
+        b.bookmarks.push(b.currentPage);
+        showToast('🔖 Закладка установлена');
+      } else {
+        b.bookmarks.splice(idx, 1);
+        showToast('📍 Закладка снята (автопозиция сохранена)');
+      }
+      renderPageDOM(b);
+    }
+
     // ==========================================
-    // СЕНСОРНЫЕ ЖЕСТЫ (СВАЙП) И ДВОЙНОЙ ТАП
+    // ЖЕСТЫ: СВАЙП ВВЕРХ ДЛЯ МЕНЮ, ДВОЙНОЙ ТАП ДЛЯ ЗАКЛАДКИ
     // ==========================================
     let touchStartX = 0;
     let touchStartY = 0;
     let lastTapTime = 0;
 
-    readerStage.addEventListener('touchstart', (e) => {
+    readerScreen.addEventListener('touchstart', (e) => {
       if (e.touches.length === 1) {
         touchStartX = e.touches[0].clientX;
         touchStartY = e.touches[0].clientY;
       }
     }, { passive: true });
 
-    readerStage.addEventListener('touchend', (e) => {
+    readerScreen.addEventListener('touchend', (e) => {
       if (e.changedTouches.length !== 1) return;
 
       const touchEndX = e.changedTouches[0].clientX;
@@ -891,34 +1054,43 @@
       const diffX = touchEndX - touchStartX;
       const diffY = touchEndY - touchStartY;
 
-      // Если это горизонтальный свайп с амплитудой > 48px
-      if (Math.abs(diffX) > 48 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
+      // 1. СВАЙП ВВЕРХ: открывает меню, а если меню открыто — также свайп вверх закрывает его!
+      if (diffY < -45 && Math.abs(diffY) > Math.abs(diffX) * 1.2) {
+        toggleHud();
+        return;
+      }
+
+      // Если открыто меню, горизонтальные свайпы не перелистывают
+      if (isHudVisible) return;
+
+      // 2. ГОРИЗОНТАЛЬНЫЙ СВАЙП: перелистывание как в книге
+      if (Math.abs(diffX) > 42 && Math.abs(diffX) > Math.abs(diffY) * 1.3) {
         if (diffX < 0) {
-          nextPage(); // Свайп влево -> следующая страница
+          nextPage(); // Влево -> вперед
         } else {
-          prevPage(); // Свайп вправо -> предыдущая страница
+          prevPage(); // Вправо -> назад
         }
         return;
       }
 
-      // Проверка на двойной тап (Double Tap)
+      // 3. ДВОЙНОЙ ТАП: ставит или снимает закладку
       const now = Date.now();
       const timeDiff = now - lastTapTime;
-      if (timeDiff < 320 && Math.abs(diffX) < 15 && Math.abs(diffY) < 15) {
-        toggleHud();
+      if (timeDiff < 320 && Math.abs(diffX) < 16 && Math.abs(diffY) < 16) {
+        toggleBookmark();
         lastTapTime = 0;
       } else {
         lastTapTime = now;
       }
     }, { passive: true });
 
-    // Двойной клик для ПК мыши
+    // Двойной клик мышью на ПК
     readerStage.addEventListener('dblclick', () => {
-      toggleHud();
+      toggleBookmark();
     });
 
     // ==========================================
-    // НАСТРОЙКИ В МЕНЮ ЧИТАЛКИ (HUD)
+    // КНОПКИ В МЕНЮ ЧИТАЛКИ
     // ==========================================
     hudBackBtn.onclick = () => {
       readerScreen.classList.remove('active');
@@ -928,17 +1100,7 @@
     };
 
     hudBookmarkBtn.onclick = () => {
-      const b = books.find(x => x.id === activeBookId);
-      if (!b) return;
-      if (!b.bookmarks) b.bookmarks = [];
-
-      const idx = b.bookmarks.indexOf(b.currentPage);
-      if (idx === -1) {
-        b.bookmarks.push(b.currentPage);
-      } else {
-        b.bookmarks.splice(idx, 1);
-      }
-      updatePageDOM(b);
+      toggleBookmark();
     };
 
     pageScrubber.oninput = (e) => {
@@ -946,7 +1108,7 @@
       if (!b) return;
       const targetPage = parseInt(e.target.value, 10) - 1;
       b.currentPage = Math.max(0, Math.min(targetPage, b.pages.length - 1));
-      updatePageDOM(b);
+      renderPageDOM(b);
     };
 
     document.getElementById('font-inc').onclick = () => {
@@ -985,7 +1147,7 @@
     });
 
     // ==========================================
-    // ДОБАВЛЕНИЕ КНИГИ
+    // ДОБАВЛЕНИЕ НОВОЙ КНИГИ
     // ==========================================
     document.getElementById('open-add-dialog').onclick = () => addModal.classList.add('active');
     document.getElementById('cancel-add').onclick = () => addModal.classList.remove('active');
@@ -1024,11 +1186,13 @@
       addModal.classList.remove('active');
     };
 
-    // Клавиши со стрелками и Escape для удобства
+    // Клавиатура ПК для тестов
     window.addEventListener('keydown', (e) => {
       if (!readerScreen.classList.contains('active')) return;
       if (e.key === 'ArrowRight') nextPage();
       if (e.key === 'ArrowLeft') prevPage();
+      if (e.key === 'ArrowUp') toggleHud();
+      if (e.key === 'b' || e.key === 'B' || e.key === 'и' || e.key === 'И') toggleBookmark();
       if (e.key === 'Escape') {
         if (isHudVisible) {
           toggleHud();
