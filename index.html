@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Полка — Читалка v1.0</title>
+
+  <!-- PWA & Mobile Web App Meta -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Читалка">
+  <meta name="theme-color" content="#1e1e24">
+
+  <!-- SVG Book Icon as Favicon & Apple Touch Icon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='110' fill='%238d2b2b'/%3E%3Cpath d='M110 120c45-20 95-20 146 0 51-20 101-20 146 0v240c-45-20-95-20-146 0-51-20-101-20-146 0z' fill='%23fbf0d9'/%3E%3Cpath d='M256 120v240' stroke='%233e2723' stroke-width='14' stroke-linecap='round'/%3E%3Cpath d='M130 180c35-15 80-15 110 0M130 230c35-15 80-15 110 0M130 280c35-15 80-15 110 0M272 180c30-15 75-15 110 0M272 230c30-15 75-15 110 0M272 280c30-15 75-15 110 0' stroke='%23c7b299' stroke-width='8' stroke-linecap='round'/%3E%3Cpath d='M380 120v110l-25-20-25 20v-110' fill='%23d84315'/%3E%3C/svg%3E">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='110' fill='%238d2b2b'/%3E%3Cpath d='M110 120c45-20 95-20 146 0 51-20 101-20 146 0v240c-45-20-95-20-146 0-51-20-101-20-146 0z' fill='%23fbf0d9'/%3E%3Cpath d='M256 120v240' stroke='%233e2723' stroke-width='14' stroke-linecap='round'/%3E%3Cpath d='M130 180c35-15 80-15 110 0M130 230c35-15 80-15 110 0M130 280c35-15 80-15 110 0M272 180c30-15 75-15 110 0M272 230c30-15 75-15 110 0M272 280c30-15 75-15 110 0' stroke='%23c7b299' stroke-width='8' stroke-linecap='round'/%3E%3Cpath d='M380 120v110l-25-20-25 20v-110' fill='%23d84315'/%3E%3C/svg%3E">
+
+  <style>
+    :root {
+      --bg: #18181c;
+      --shelf-wood: #3a2218;
+      --shelf-light: #523122;
+      --paper: #fbf1dc;
+      --paper-shadow: #e0d2b4;
+      --text: #2a2421;
+      --accent: #d84315;
+      --accent-hover: #bf360c;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    header {
+      padding: 1rem 1.25rem;
+      background: rgba(20, 20, 24, 0.85);
+      backdrop-filter: blur(12px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      background: #8d2b2b;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      font-size: 1.1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    }
+    .brand-text h1 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+    .brand-text span {
+      font-size: 0.72rem;
+      color: #a0a0ab;
+      display: block;
+    }
+    button {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 0.55rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.88rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: background 0.15s, transform 0.1s;
+    }
+    button:active { transform: scale(0.97); }
+    button:hover { background: var(--accent-hover); }
+
+    /* Полка */
+    .shelf-container {
+      flex: 1;
+      padding: 2.5rem 1rem;
+      max-width: 860px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .shelf-row {
+      margin-bottom: 3.5rem;
+    }
+    .books-grid {
+      display: flex;
+      gap: 1.25rem;
+      align-items: flex-end;
+      padding: 0 1rem 0.2rem;
+      overflow-x: auto;
+      scrollbar-width: thin;
+    }
+    .wood-board {
+      height: 18px;
+      background: linear-gradient(180deg, var(--shelf-light) 0%, var(--shelf-wood) 100%);
+      border-radius: 3px;
+      box-shadow: 0 14px 25px rgba(0,0,0,0.65), inset 0 2px 2px rgba(255,255,255,0.15);
+      position: relative;
+    }
+    .wood-board::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 3%;
+      right: 3%;
+      height: 10px;
+      background: rgba(0,0,0,0.45);
+      filter: blur(6px);
+    }
+
+    /* Книга на полке */
+    .book-item {
+      flex-shrink: 0;
+      width: 120px;
+      height: 175px;
+      border-radius: 3px 10px 10px 3px;
+      padding: 0.9rem 0.75rem;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      box-shadow: -5px 0 10px rgba(0,0,0,0.5), 5px 8px 18px rgba(0,0,0,0.35);
+      transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s;
+      user-select: none;
+    }
+    .book-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 9px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.25) 0%, rgba(0,0,0,0.2) 100%);
+      border-radius: 3px 0 0 3px;
+    }
+    .book-item:hover {
+      transform: translateY(-12px) rotate(-1deg);
+      box-shadow: -6px 12px 24px rgba(0,0,0,0.6);
+    }
+    .book-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      line-height: 1.25;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+      word-break: break-word;
+    }
+    .book-meta {
+      font-size: 0.72rem;
+      opacity: 0.85;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .bookmark-flag {
+      color: #ffd54f;
+      font-size: 0.85rem;
+    }
+
+    /* Модальное окно чтения */
+    .reader-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 10, 14, 0.92);
+      backdrop-filter: blur(14px);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 100;
+    }
+    .reader-modal.active { display: flex; }
+
+    .reader-topbar {
+      width: 100%;
+      max-width: 520px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+      padding: 0 0.5rem;
+    }
+    .reader-topbar span {
+      font-size: 0.88rem;
+      color: #cfcfe0;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 260px;
+    }
+    .close-btn {
+      background: rgba(255,255,255,0.12);
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      font-size: 1.1rem;
+    }
+
+    /* Книжный разворот и 3D анимация */
+    .book-stage {
+      perspective: 1600px;
+      width: 100%;
+      max-width: 520px;
+      height: 68vh;
+      min-height: 420px;
+      max-height: 640px;
+      position: relative;
+    }
+    .page-sheet {
+      width: 100%;
+      height: 100%;
+      background: var(--paper);
+      color: var(--text);
+      padding: 2.2rem 2rem 2rem 2.4rem;
+      border-radius: 6px 16px 16px 6px;
+      box-shadow: inset 24px 0 32px var(--paper-shadow), 0 16px 36px rgba(0,0,0,0.55);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transform-origin: left center;
+      transition: transform 0.55s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease;
+      position: relative;
+    }
+    .page-ribbon {
+      display: none;
+      position: absolute;
+      top: 0;
+      right: 28px;
+      width: 22px;
+      height: 38px;
+      background: var(--accent);
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 75%, 0 100%);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+    .page-ribbon.visible { display: block; }
+
+    .page-sheet.flipping-forward {
+      transform: rotateY(-110deg) scale(0.95);
+      opacity: 0.15;
+    }
+    .page-sheet.flipping-back {
+      transform: rotateY(40deg) scale(0.95);
+      opacity: 0.15;
+    }
+
+    .page-text {
+      font-size: 1.08rem;
+      line-height: 1.7;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      font-family: Georgia, "Times New Roman", serif;
+      padding-right: 0.4rem;
+    }
+    .page-bottom {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: #7a6e65;
+      border-top: 1px solid rgba(0,0,0,0.1);
+      padding-top: 0.7rem;
+      margin-top: 0.5rem;
+    }
+
+    /* Навигация под книгой */
+    .reader-controls {
+      margin-top: 1rem;
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 520px;
+    }
+    .btn-ctrl {
+      background: rgba(255,255,255,0.12);
+      font-size: 0.85rem;
+      padding: 0.55rem 0.9rem;
+    }
+    .btn-ctrl.bookmarked {
+      background: #f57c00;
+    }
+
+    /* Модалка добавления книги */
+    .add-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 150;
+    }
+    .add-modal.active { display: flex; }
+    .add-box {
+      background: #24242c;
+      width: 100%;
+      max-width: 440px;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .add-box h2 { font-size: 1.2rem; }
+    .add-box input, .add-box textarea, .add-box select {
+      width: 100%;
+      padding: 0.65rem 0.8rem;
+      background: #18181f;
+      border: 1px solid #3c3c4a;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 0.9rem;
+      font-family: inherit;
+    }
+    .add-box textarea { resize: vertical; min-height: 110px; }
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.6rem;
+    }
+    .btn-cancel { background: #3a3a46; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <div class="brand-icon">📖</div>
+      <div class="brand-text">
+        <h1>Книжная Полка</h1>
+        <span>Версия 1.0 • PWA Ready</span>
+      </div>
+    </div>
+    <button id="open-add-dialog">+ Добавить книгу</button>
+  </header>
+
+  <div class="shelf-container">
+    <div class="shelf-row">
+      <div class="books-grid" id="bookshelf"></div>
+      <div class="wood-board"></div>
+    </div>
+  </div>
+
+  <!-- Читалка -->
+  <div class="reader-modal" id="reader">
+    <div class="reader-topbar">
+      <span id="book-title">Название книги</span>
+      <button class="close-btn" id="close-reader" title="Вернуться на полку">✕</button>
+    </div>
+
+    <div class="book-stage">
+      <div class="page-sheet" id="book-page">
+        <div class="page-ribbon" id="page-ribbon"></div>
+        <div class="page-text" id="page-content"></div>
+        <div class="page-bottom">
+          <span id="page-counter">Стр. 1 из 1</span>
+          <span id="author-label">Автор</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="reader-controls">
+      <button class="btn-ctrl" id="prev-btn">← Назад</button>
+      <button class="btn-ctrl" id="bookmark-btn">🔖 Закладка</button>
+      <button class="btn-ctrl" id="next-btn">Вперед →</button>
+    </div>
+  </div>
+
+  <!-- Добавление книги -->
+  <div class="add-modal" id="add-modal">
+    <div class="add-box">
+      <h2>Добавить книгу на полку</h2>
+      <input type="text" id="new-title" placeholder="Название книги" required>
+      <input type="text" id="new-author" placeholder="Автор">
+      <select id="new-color">
+        <option value="#8d2b2b">Бордовый переплет</option>
+        <option value="#1b5e20">Темно-зеленый переплет</option>
+        <option value="#0d47a1">Синий сапфир</option>
+        <option value="#4a148c">Глубокий фиолетовый</option>
+        <option value="#b26a00">Кожаный охристый</option>
+        <option value="#263238">Графитовый</option>
+      </select>
+      <textarea id="new-text" placeholder="Вставьте текст произведения. Разделяйте страницы двойным переносом строки (Enter дважды)"></textarea>
+      <div class="modal-actions">
+        <button class="btn-cancel" id="cancel-add">Отмена</button>
+        <button id="save-book">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'shelf_books_v1';
+
+    const defaultBooks = [
+      {
+        id: "b1",
+        title: "Остров Сокровищ",
+        author: "Р. Л. Стивенсон",
+        color: "#1b5e20",
+        currentPage: 0,
+        bookmarks: [1],
+        pages: [
+          "Глава I. Старый морской волк в трактире «Адмирал Бенбоу».\n\nСквайр Трелони, доктор Ливси и другие джентльмены попросили меня написать все, что я знаю об Острове Сокровищ от первого до последнего слова, не скрывая ничего, кроме географического положения острова, да и то лишь потому, что сокровища еще не вывезены до конца.\n\nИ вот я берусь за перо в нынешнем 17... году и мысленно возвращаюсь к тому времени, когда мой отец держал трактир «Адмирал Бенбоу»...",
+          "Помню, как незнакомец тяжело ступал к нашей двери, а за ним катили на тачке его просмоленный морской сундук. Это был высокий, плотный, загорелый мужчина с просмоленной косичкой над воротником засаленного синего кафтана.\n\nНа щеке у него белел сабельный шрам. Он свистнул, оглядел бухту и затянул старую матросскую песню:\n\n«Пятнадцать человек на сундук мертвеца, йо-хо-хо, и бутылка рому!»",
+          "Капитан целыми днями бродил вокруг бухты или взбирался на желтые утесы с медной зрительной трубой. По вечерам он сидел у пылающего камина и молча цедил разбавленный ром.\n\nБольше всего на свете он боялся появления одноногого моряка. Каждому из нас он обещал серебряную монету в четыре пенса, если мы вовремя предупредим его об опасности."
+        ]
+      },
+      {
+        id: "b2",
+        title: "Машина Времени",
+        author: "Герберт Уэллс",
+        color: "#0d47a1",
+        currentPage: 0,
+        bookmarks: [],
+        pages: [
+          "Глава I.\n\nПутешественник по Времени излагал нам весьма спорную мысль. Его серые глаза горели оживлением, а обычно бледное лицо разрумянилось от спора.\n\n— Вы должны внимательно следовать за моей мыслью, — говорил он. — Общепринятая геометрия покоится на чистейшем заблуждении. Математики утверждают, что длина, ширина и толщина суть три измерения пространства. Но они забывают о четвертом...",
+          "— Четвертое измерение — это Время, — продолжал он, обводя взглядом собравшихся у камина гостей. — Нет никакой разницы между Временем и тремя другими измерениями Пространства, кроме той, что наше сознание движется вдоль него только в одном направлении.\n\nС этими словами он снял шелковый покров с маленького изящного механизма из латуни и горного хрусталя."
+        ]
+      },
+      {
+        id: "b3",
+        title: "Собака Баскервилей",
+        author: "Артур Конан Дойл",
+        color: "#8d2b2b",
+        currentPage: 0,
+        bookmarks: [],
+        pages: [
+          "Глава I. Мистер Шерлок Холмс.\n\nШерлок Холмс сидел за столом и пил утренний чай. Я стоял на коврике у камина и разглядывал трость, забытую нашим вчерашним ночным посетителем.\n\nЭто была толстая дубовая палка с набалдашником из капа — из тех, что зовут «докторскими». Чуть ниже набалдашника красовалась серебряная пластинка с надписью: «Джеймсу Мортимеру от друзей по ЧКХ, 1884 г.»",
+          "— Ну, Уотсон, какого вы мнения об этом предмете? — спросил Холмс, не оборачиваясь ко мне кофейника.\n\n— Откуда вы знаете, чем я занят? Можно подумать, у вас глаза на затылке!\n\n— На затылке глаз нет, зато передо мной начищенный серебряный кофейник, — усмехнулся мой гениальный друг."
+        ]
+      }
+    ];
+
+    let books = [];
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      books = saved ? JSON.parse(saved) : defaultBooks;
+    } catch (e) {
+      books = defaultBooks;
+    }
+
+    let activeBookId = null;
+
+    const shelfEl = document.getElementById('bookshelf');
+    const readerEl = document.getElementById('reader');
+    const pageSheetEl = document.getElementById('book-page');
+    const pageContentEl = document.getElementById('page-content');
+    const pageCounterEl = document.getElementById('page-counter');
+    const bookTitleEl = document.getElementById('book-title');
+    const authorLabelEl = document.getElementById('author-label');
+    const bookmarkBtn = document.getElementById('bookmark-btn');
+    const ribbonEl = document.getElementById('page-ribbon');
+
+    const addModal = document.getElementById('add-modal');
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(books));
+    }
+
+    function renderShelf() {
+      shelfEl.innerHTML = '';
+      books.forEach(b => {
+        const item = document.createElement('div');
+        item.className = 'book-item';
+        item.style.backgroundColor = b.color || '#8d2b2b';
+
+        const hasBm = b.bookmarks && b.bookmarks.length > 0;
+        const progress = Math.round(((b.currentPage + 1) / b.pages.length) * 100);
+
+        item.innerHTML = `
+          <div class="book-title">${escapeHtml(b.title)}</div>
+          <div class="book-meta">
+            <span>${progress}%</span>
+            ${hasBm ? '<span class="bookmark-flag">🔖</span>' : ''}
+          </div>
+        `;
+        item.onclick = () => openReader(b.id);
+        shelfEl.appendChild(item);
+      });
+    }
+
+    function escapeHtml(str) {
+      return (str || '').replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[m]));
+    }
+
+    function openReader(id) {
+      activeBookId = id;
+      const b = books.find(x => x.id === id);
+      if (!b) return;
+
+      bookTitleEl.textContent = b.title;
+      authorLabelEl.textContent = b.author || '';
+      readerEl.classList.add('active');
+      renderCurrentPage(false);
+    }
+
+    function renderCurrentPage(withAnimation = false, direction = 'next') {
+      const b = books.find(x => x.id === activeBookId);
+      if (!b) return;
+
+      if (withAnimation) {
+        const animClass = direction === 'next' ? 'flipping-forward' : 'flipping-back';
+        pageSheetEl.classList.add(animClass);
+        setTimeout(() => {
+          pageSheetEl.style.transition = 'none';
+          pageSheetEl.classList.remove(animClass);
+          updatePageDOM(b);
+          setTimeout(() => {
+            pageSheetEl.style.transition = '';
+          }, 40);
+        }, 280);
+      } else {
+        updatePageDOM(b);
+      }
+    }
+
+    function updatePageDOM(b) {
+      pageContentEl.textContent = b.pages[b.currentPage] || '';
+      pageCounterEl.textContent = `Стр. ${b.currentPage + 1} из ${b.pages.length}`;
+
+      const isMarked = b.bookmarks && b.bookmarks.includes(b.currentPage);
+      ribbonEl.classList.toggle('visible', isMarked);
+      bookmarkBtn.classList.toggle('bookmarked', isMarked);
+      bookmarkBtn.textContent = isMarked ? '✓ В закладках' : '🔖 Закладка';
+
+      saveState();
+    }
+
+    document.getElementById('next-btn').onclick = () => {
+      const b = books.find(x => x.id === activeBookId);
+      if (b && b.currentPage < b.pages.length - 1) {
+        b.currentPage++;
+        renderCurrentPage(true, 'next');
+      }
+    };
+
+    document.getElementById('prev-btn').onclick = () => {
+      const b = books.find(x => x.id === activeBookId);
+      if (b && b.currentPage > 0) {
+        b.currentPage--;
+        renderCurrentPage(true, 'prev');
+      }
+    };
+
+    bookmarkBtn.onclick = () => {
+      const b = books.find(x => x.id === activeBookId);
+      if (!b) return;
+      if (!b.bookmarks) b.bookmarks = [];
+
+      const idx = b.bookmarks.indexOf(b.currentPage);
+      if (idx === -1) {
+        b.bookmarks.push(b.currentPage);
+      } else {
+        b.bookmarks.splice(idx, 1);
+      }
+      updatePageDOM(b);
+    };
+
+    document.getElementById('close-reader').onclick = () => {
+      readerEl.classList.remove('active');
+      renderShelf();
+    };
+
+    // Добавление новой книги
+    document.getElementById('open-add-dialog').onclick = () => {
+      addModal.classList.add('active');
+    };
+    document.getElementById('cancel-add').onclick = () => {
+      addModal.classList.remove('active');
+    };
+
+    document.getElementById('save-book').onclick = () => {
+      const titleInput = document.getElementById('new-title').value.trim();
+      const authorInput = document.getElementById('new-author').value.trim() || 'Не указан';
+      const colorInput = document.getElementById('new-color').value;
+      const textInput = document.getElementById('new-text').value.trim();
+
+      if (!titleInput) {
+        alert('Пожалуйста, укажите название книги');
+        return;
+      }
+
+      let pages = textInput.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
+      if (!pages.length) pages = ["Страница 1. Текст книги пока пуст."];
+
+      const newBook = {
+        id: 'book_' + Date.now(),
+        title: titleInput,
+        author: authorInput,
+        color: colorInput,
+        currentPage: 0,
+        bookmarks: [],
+        pages: pages
+      };
+
+      books.push(newBook);
+      saveState();
+      renderShelf();
+
+      document.getElementById('new-title').value = '';
+      document.getElementById('new-author').value = '';
+      document.getElementById('new-text').value = '';
+      addModal.classList.remove('active');
+    };
+
+    // Закрытие по клавише Escape
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (readerEl.classList.contains('active')) {
+          readerEl.classList.remove('active');
+          renderShelf();
+        }
+        addModal.classList.remove('active');
+      }
+    });
+
+    renderShelf();
+  </script>
+</body>
+</html>
